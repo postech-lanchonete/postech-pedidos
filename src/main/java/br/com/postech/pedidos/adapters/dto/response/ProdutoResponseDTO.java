@@ -1,6 +1,6 @@
 package br.com.postech.pedidos.adapters.dto.response;
 
-import br.com.postech.pedidos.core.enums.CategoriaProduto;
+import br.com.postech.pedidos.adapters.enums.CategoriaProduto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;

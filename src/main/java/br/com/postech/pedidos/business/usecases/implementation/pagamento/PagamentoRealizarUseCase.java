@@ -5,7 +5,7 @@ import br.com.postech.pedidos.adapters.dto.request.PagamentoRequestDTO;
 import br.com.postech.pedidos.adapters.gateways.PagamentoGateway;
 import br.com.postech.pedidos.business.exceptions.NegocioException;
 import br.com.postech.pedidos.business.usecases.UseCase;
-import br.com.postech.pedidos.core.enums.StatusPagamento;
+import br.com.postech.pedidos.adapters.enums.StatusPagamento;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

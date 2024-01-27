@@ -1,4 +1,4 @@
-package br.com.postech.pedidos.core.enums;
+package br.com.postech.pedidos.adapters.enums;
 
 import br.com.postech.pedidos.business.exceptions.BadRequestException;
 

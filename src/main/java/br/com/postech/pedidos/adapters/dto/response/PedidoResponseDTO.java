@@ -1,6 +1,6 @@
 package br.com.postech.pedidos.adapters.dto.response;
 
-import br.com.postech.pedidos.core.enums.StatusDoPedido;
+import br.com.postech.pedidos.adapters.enums.StatusDoPedido;
 import lombok.Getter;
 import lombok.Setter;
 

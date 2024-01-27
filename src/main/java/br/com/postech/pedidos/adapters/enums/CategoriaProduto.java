@@ -1,4 +1,4 @@
-package br.com.postech.pedidos.core.enums;
+package br.com.postech.pedidos.adapters.enums;
 
 public enum CategoriaProduto {
 
