@@ -2,15 +2,23 @@
 
 ##### versão 1.0.0-POC
 
-<img src="https://img.shields.io/badge/Java-17-important.svg?logo=java" alt="shield referente a versao do java"><img src="https://img.shields.io/badge/Build Tool-Gradle-green.svg?logo=gradle" alt="shield referente ao uso de gradle">[<img src="https://img.shields.io/badge/dockerhub-images-blue.svg?logo=docker" alt="shield referente ao docker hub">](https://hub.docker.com/repository/docker/danielmaria/lanchonetebairro-app/general) <img src="https://img.shields.io/badge/Orchestrated by-Kubernetes-green.svg?logo=kubernetes" alt="shield referente ao uso de kubernetes">[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=postech-lanchonete_lanchonete-backend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=postech-lanchonete_lanchonete-backend)
+<img src="https://img.shields.io/badge/Java-17-important.svg?logo=java" alt="shield referente a versao do java"><img src="https://img.shields.io/badge/Build Tool-Gradle-green.svg?logo=gradle" alt="shield referente ao uso de gradle">
+[<img src="https://img.shields.io/badge/dockerhub-images-blue.svg?logo=docker" alt="shield referente ao docker hub">](https://hub.docker.com/repository/docker/danielmaria/lanchonetebairro-app/general)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=postech-lanchonete_postech-pedidos&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=postech-lanchonete_postech-pedidos)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=postech-lanchonete_postech-pedidos&metric=coverage)](https://sonarcloud.io/summary/new_code?id=postech-lanchonete_postech-pedidos)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=postech-lanchonete_postech-pedidos&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=postech-lanchonete_postech-pedidos)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=postech-lanchonete_postech-pedidos&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=postech-lanchonete_postech-pedidos)
 
 ____
-
+<p align="justify">
 A API de Centralização de Pedidos desempenha um papel crucial na orquestração do processo de pedidos. Ao receber uma solicitação de pedido, a API verifica a existência do cliente, busca os produtos necessários, realiza o pagamento e coloca o pedido na fila de produção. Caso todos esses passos ocorram com sucesso, a API notifica o cliente sobre o andamento do pedido. Essa abordagem centralizada otimiza o fluxo de trabalho, garantindo uma experiência eficiente tanto para os clientes quanto para a equipe de produção.
+</p>
 
 ## Pipeline
 
+<p align="justify">
 Quando um desenvolvedor faz um commit no GitHub, a plataforma identifica se a ação deve ser acionada. Se sim, a pipeline inicia com o CI, que executa testes unitários. Se os testes forem bem-sucedidos, a imagem Docker é construída e enviada para o Docker Hub. Após a conclusão bem-sucedida do CI, o CD entra em ação. Ele começa baixando a imagem Docker, remove o contêiner em execução na instância EC2 e substitui-o pela nova imagem. Esse fluxo garante que seu software seja testado automaticamente e implantado de forma eficiente, melhorando a qualidade e a entrega contínua de novas funcionalidades.
+</p>
 
 <p align="center">
   <img src="https://github.com/postech-lanchonete/lanchonete-backend/assets/20681811/15ad5f82-7b39-43d9-8f4b-b0778f9daeb2" />
