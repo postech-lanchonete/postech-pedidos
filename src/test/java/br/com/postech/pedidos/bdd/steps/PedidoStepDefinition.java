@@ -1,11 +1,11 @@
 package br.com.postech.pedidos.bdd.steps;
 
-import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
 import br.com.postech.pedidos.adapters.dto.CriacaoPedidoDTO;
+import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.ProdutoResponseDTO;
-import br.com.postech.pedidos.bdd.helper.RequestHelper;
 import br.com.postech.pedidos.adapters.enums.StatusDoPedido;
+import br.com.postech.pedidos.bdd.helper.RequestHelper;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.E;
 import io.cucumber.java.pt.Entao;

@@ -7,6 +7,7 @@ import br.com.postech.pedidos.business.usecases.UseCase;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 
 import static java.text.MessageFormat.format;
 
@@ -25,6 +26,9 @@ public class ClienteBuscarPorCpfUseCase implements UseCase<String, ClienteRespon
             log.debug("Cliente encontrado com sucesso");
             return cliente;
         } catch (Exception exception) {
+            if (exception instanceof ResourceAccessException) {
+                throw new InternalError("I/O exception");
+            }
             log.error("Cliente não encontrado com cpf {}", cpf);
             throw new NotFoundException(format("Cliente não encontrado com cpf {0}", cpf));
         }

@@ -1,7 +1,7 @@
 package br.com.postech.pedidos.business.usecases.implementation.pedido;
 
-import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
 import br.com.postech.pedidos.adapters.dto.request.PedidoRequestDTO;
+import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
 import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
 import br.com.postech.pedidos.business.exceptions.NegocioException;
 import br.com.postech.pedidos.business.usecases.UseCase;
@@ -26,8 +26,8 @@ public class PedidoEnviarParaProducaoUseCase implements UseCase<PedidoRequestDTO
             log.debug("Pedido enviado com sucesso");
             return pedido;
         } catch (Exception exception) {
-            //TODO: Implementar rollback ou retentativas
-            throw new NegocioException("Pedido não enviado para produção");
+            log.error("Pedido não enviado para produção");
+            throw new NegocioException(exception.getMessage());
         }
     }
 }
