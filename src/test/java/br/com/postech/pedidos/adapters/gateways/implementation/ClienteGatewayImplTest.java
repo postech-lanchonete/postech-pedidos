@@ -31,7 +31,7 @@ class ClienteGatewayImplTest {
     void buscarPorCpf_DeveRetornarRespostaCorreta() {
         String cpf = "123.321.123";
         ClienteResponseDTO respostaSimulada = new ClienteResponseDTO();
-        when(restTemplate.getForObject(eq("http://example.com/{cpf}"), eq(ClienteResponseDTO.class), eq(cpf)))
+        when(restTemplate.getForObject("http://example.com/{cpf}", ClienteResponseDTO.class, cpf))
                 .thenReturn(respostaSimulada);
 
         ClienteResponseDTO resposta = gateway.buscarPorCpf(cpf);

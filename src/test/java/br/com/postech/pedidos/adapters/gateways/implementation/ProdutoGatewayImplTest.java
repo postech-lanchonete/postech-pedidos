@@ -30,7 +30,7 @@ class ProdutoGatewayImplTest {
     void buscarPorId_DeveRetornarRespostaCorreta() {
         Long idProduto = 1L;
         ProdutoResponseDTO respostaSimulada = new ProdutoResponseDTO();
-        when(restTemplate.getForObject(eq("http://example.com/{id}"), eq(ProdutoResponseDTO.class), eq(idProduto)))
+        when(restTemplate.getForObject("http://example.com/{id}", ProdutoResponseDTO.class, idProduto))
                 .thenReturn(respostaSimulada);
 
         ProdutoResponseDTO resposta = gateway.buscarPorId(idProduto);

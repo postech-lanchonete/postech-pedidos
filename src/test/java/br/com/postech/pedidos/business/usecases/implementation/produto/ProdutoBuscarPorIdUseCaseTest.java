@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ProdutoBuscarPorIdUseCaseTest {
+class ProdutoBuscarPorIdUseCaseTest {
 
     @Mock
     private ProdutoGateway produtoGateway;

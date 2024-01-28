@@ -37,9 +37,9 @@ class PagamentoGatewayImplTest {
         PagamentoResponseDTO respostaSimulada = new PagamentoResponseDTO();
 
         when(restTemplate.postForObject(
-                eq(URL),
-                eq(pagamentoRequestDTO),
-                eq(PagamentoResponseDTO.class)))
+                URL,
+                pagamentoRequestDTO,
+                PagamentoResponseDTO.class))
                 .thenReturn(respostaSimulada);
 
         PagamentoResponseDTO resposta = gateway.pagar(pagamentoRequestDTO);

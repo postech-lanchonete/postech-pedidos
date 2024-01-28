@@ -15,9 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ClienteBuscarPorCpfUseCaseTest {
+class ClienteBuscarPorCpfUseCaseTest {
     private final String CPF = "12345678901";
-
 
     @Mock
     private ClienteGateway clienteGateway;
