@@ -1,4 +1,4 @@
-package br.com.postech.pedidos.adapters.controllers;
+package br.com.postech.pedidos.adapters.input.controllers;
 
 import br.com.postech.pedidos.adapters.dto.CriacaoPedidoDTO;
 import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;

@@ -19,7 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 class PagamentoRealizarUseCaseTest {
@@ -33,30 +33,17 @@ class PagamentoRealizarUseCaseTest {
     @Test
     void realizar_PagamentoAprovado_RetornaPagamentoAprovado() {
         PagamentoRequestDTO pagamentoRequest = criarPagamentoRequestDTO();
-        PagamentoResponseDTO pagamentoResponse = new PagamentoResponseDTO();
-        pagamentoResponse.setStatus(StatusPagamento.APROVADO);
-
-        when(pagamentoGateway.pagar(any())).thenReturn(pagamentoResponse);
 
         PagamentoResponseDTO resultado = pagamentoRealizarUseCase.realizar(pagamentoRequest);
 
-        assertEquals(StatusPagamento.APROVADO, resultado.getStatus());
-    }
-
-    @Test
-    void realizar_PagamentoNaoAprovado_GeraNegocioException() {
-        PagamentoRequestDTO pagamentoRequest = criarPagamentoRequestDTO();
-
-        when(pagamentoGateway.pagar(any())).thenReturn(new PagamentoResponseDTO());
-
-        assertThrows(NegocioException.class, () -> pagamentoRealizarUseCase.realizar(pagamentoRequest));
+        assertEquals(StatusPagamento.PENDENTE, resultado.getStatus());
     }
 
     @Test
     void realizar_ExcecaoAoRealizarPagamento_GeraNegocioException() {
         PagamentoRequestDTO pagamentoRequest = criarPagamentoRequestDTO();
 
-        when(pagamentoGateway.pagar(any())).thenThrow(new RuntimeException("Simulando exceção ao realizar pagamento"));
+        doThrow(new RuntimeException("Simulando exceção ao realizar pagamento")).when(pagamentoGateway).pagar(any());
 
         assertThrows(NegocioException.class, () -> pagamentoRealizarUseCase.realizar(pagamentoRequest));
     }
@@ -66,7 +53,7 @@ class PagamentoRealizarUseCaseTest {
         var produtos = List.of(new ProdutoResponseDTO());
         var cliente = new ClienteResponseDTO();
         cliente.setCpf("123.321.123-00");
-        dto.setPedido(new PedidoRequestDTO(produtos, cliente));
+        dto.setPedido(new PedidoRequestDTO(1L, StatusPagamento.PENDENTE, produtos, cliente));
         return dto;
     }
 }

@@ -23,16 +23,14 @@ public class PagamentoRealizarUseCase implements UseCase<PagamentoRequestDTO, Pa
     public PagamentoResponseDTO realizar(PagamentoRequestDTO pagamentoRequest) {
         log.debug("Realizando pagamento para o cliente com cpf {}", pagamentoRequest.getPedido().getCliente().getCpf());
         try {
-            var pagamento = pagamentoGateway.pagar(pagamentoRequest);
-            if (pagamento.getStatus() == StatusPagamento.APROVADO) {
-                log.debug("Pagamento realizado com sucesso");
-                return pagamento;
-            }
+            pagamentoGateway.pagar(pagamentoRequest);
+            PagamentoResponseDTO pagamentoResponseDTO = new PagamentoResponseDTO();
+            pagamentoResponseDTO.setStatus(StatusPagamento.PENDENTE);
+            return pagamentoResponseDTO;
         } catch (Exception exception) {
             log.error("Erro ao chamar o pagamento");
+            throw new NegocioException("Pagamento não aprovado");
         }
-        throw new NegocioException("Pagamento não aprovado");
-
     }
 
 }

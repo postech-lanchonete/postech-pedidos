@@ -84,7 +84,6 @@ class PedidoControllerIntegrationTest {
 
         var pagamento = new PagamentoResponseDTO();
         pagamento.setStatus(StatusPagamento.APROVADO);
-        when(pagamentoGateway.pagar(any())).thenReturn(pagamento);
 
         var pedidoResponse = new PedidoResponseDTO();
         pedidoResponse.setId(1L);

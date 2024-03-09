@@ -1,6 +1,7 @@
 package br.com.postech.pedidos.adapters.gateways.implementation;
 
 import br.com.postech.pedidos.adapters.dto.response.ProdutoResponseDTO;
+import br.com.postech.pedidos.drivers.external.ProdutoGatewayImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

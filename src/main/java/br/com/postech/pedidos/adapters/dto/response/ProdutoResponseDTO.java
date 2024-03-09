@@ -11,9 +11,9 @@ import java.math.BigDecimal;
 @Setter
 @SuppressWarnings("unused")
 public class ProdutoResponseDTO {
-
     @Schema(description = "ID do produto.")
     private Long id;
+
     @Schema(description = "Nome do produto.")
     private String nome;
 
