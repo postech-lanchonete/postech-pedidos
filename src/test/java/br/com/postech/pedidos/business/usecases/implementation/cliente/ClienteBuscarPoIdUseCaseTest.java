@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class clienteBuscarPoIdUseCaseTest {
+class ClienteBuscarPoIdUseCaseTest {
     private final Long ID = 12345678901L;
 
     @Mock

@@ -4,8 +4,6 @@ import br.com.postech.pedidos.adapters.dto.CriacaoPedidoDTO;
 import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.ProdutoResponseDTO;
 import br.com.postech.pedidos.adapters.gateways.ClienteGateway;
-import br.com.postech.pedidos.adapters.gateways.PagamentoGateway;
-import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
 import br.com.postech.pedidos.adapters.gateways.ProdutoGateway;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -42,6 +40,7 @@ class PedidoControllerIntegrationTest {
     @MockBean
     private ProdutoGateway produtoGateway;
 
+
     @Test
     void criar_DeveRetornar400_QuandoChamadaIncorretaSemProdutos() throws Exception {
         var criacaoPedidoDTO = new CriacaoPedidoDTO();
@@ -74,13 +73,6 @@ class PedidoControllerIntegrationTest {
         ProdutoResponseDTO produto2 = criarProdutoRequest("Salada", BigDecimal.TEN);
         when(produtoGateway.buscarPorId(12L)).thenReturn(produto1);
         when(produtoGateway.buscarPorId(21L)).thenReturn(produto2);
-
-//        var pagamento = new PagamentoResponseDTO();
-//        pagamento.setStatus(StatusPagamento.APROVADO);
-
-//        var pedidoResponse = new PedidoResponseDTO();
-//        pedidoResponse.setId(1L);
-//        when(pedidoGateway.enviarParaProducao(any())).thenReturn(pedidoResponse);
 
         var criacaoPedidoDTO = new CriacaoPedidoDTO();
         criacaoPedidoDTO.setIdsProdutos(List.of(12L, 21L));
