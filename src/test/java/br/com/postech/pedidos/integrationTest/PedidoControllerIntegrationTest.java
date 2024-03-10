@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -39,6 +40,8 @@ class PedidoControllerIntegrationTest {
     private ClienteGateway clienteGateway;
     @MockBean
     private ProdutoGateway produtoGateway;
+    @MockBean
+    private KafkaTemplate<String, String> kafkaTemplate;
 
 
     @Test
@@ -73,6 +76,7 @@ class PedidoControllerIntegrationTest {
         ProdutoResponseDTO produto2 = criarProdutoRequest("Salada", BigDecimal.TEN);
         when(produtoGateway.buscarPorId(12L)).thenReturn(produto1);
         when(produtoGateway.buscarPorId(21L)).thenReturn(produto2);
+        when(kafkaTemplate.send(any(), any())).thenReturn(null);
 
         var criacaoPedidoDTO = new CriacaoPedidoDTO();
         criacaoPedidoDTO.setIdsProdutos(List.of(12L, 21L));
