@@ -4,9 +4,8 @@ import br.com.postech.pedidos.adapters.dto.CriacaoPedidoDTO;
 import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.ProdutoResponseDTO;
-import br.com.postech.pedidos.adapters.enums.StatusDoPedido;
 import br.com.postech.pedidos.bdd.helper.RequestHelper;
-import io.cucumber.java.bs.A;
+import br.com.postech.pedidos.core.enums.StatusDoPedido;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.E;
 import io.cucumber.java.pt.Entao;
@@ -66,7 +65,7 @@ public class PedidoStepDefinition {
     @Quando("enviar uma requisição para criar um pedido para o cliente encontrado com o produto encontrado")
     public void enviarRequisicaoDeCriacao() {
         CriacaoPedidoDTO criacaoPedidoDTO = new CriacaoPedidoDTO();
-        criacaoPedidoDTO.setCpfCliente(clienteEncontrado.getCpf());
+        criacaoPedidoDTO.setIdCliente(clienteEncontrado.getId());
         criacaoPedidoDTO.setIdsProdutos(List.of(produtoEncontrado.getId()));
 
         this.requestSingleHelper = RequestHelper
@@ -88,20 +87,20 @@ public class PedidoStepDefinition {
         }
     }
 
-    @Quando("enviar uma requisição para criar um pedido para um cliente com o cpf {string} com o produto encontrado")
-    public void criarPedidoParaCpfInvalido(String cpf) {
+    @Quando("enviar uma requisição para criar um pedido para um cliente com o id {long} com o produto encontrado")
+    public void criarPedidoParaCpfInvalido(Long id) {
         CriacaoPedidoDTO criacaoPedidoDTO = new CriacaoPedidoDTO();
-        criacaoPedidoDTO.setCpfCliente(cpf);
+        criacaoPedidoDTO.setIdCliente(id);
         criacaoPedidoDTO.setIdsProdutos(List.of(produtoEncontrado.getId()));
 
         this.requestSingleHelper = RequestHelper
                 .realizar(PATCH, HttpMethod.POST, criacaoPedidoDTO, PedidoResponseDTO.class);
     }
 
-    @Quando("enviar uma requisição para criar um pedido para um cliente com o cpf {string} com o produto inexistente")
-    public void enviarUmaRequisicaoParaCriarUmPedidoParaUmClienteComOCpfComOProdutoInexistente(String cpf) {
+    @Quando("enviar uma requisição para criar um pedido para um cliente com o id {long} com o produto inexistente")
+    public void enviarUmaRequisicaoParaCriarUmPedidoParaUmClienteComOCpfComOProdutoInexistente(Long id) {
         CriacaoPedidoDTO criacaoPedidoDTO = new CriacaoPedidoDTO();
-        criacaoPedidoDTO.setCpfCliente(cpf);
+        criacaoPedidoDTO.setIdCliente(id);
         criacaoPedidoDTO.setIdsProdutos(List.of(999999999L));
 
         this.requestSingleHelper = RequestHelper

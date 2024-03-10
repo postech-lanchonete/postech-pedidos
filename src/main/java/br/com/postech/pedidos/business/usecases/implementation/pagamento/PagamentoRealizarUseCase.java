@@ -2,10 +2,10 @@ package br.com.postech.pedidos.business.usecases.implementation.pagamento;
 
 import br.com.postech.pedidos.adapters.dto.request.PagamentoRequestDTO;
 import br.com.postech.pedidos.adapters.dto.response.PagamentoResponseDTO;
-import br.com.postech.pedidos.adapters.enums.StatusPagamento;
 import br.com.postech.pedidos.adapters.gateways.PagamentoGateway;
 import br.com.postech.pedidos.business.exceptions.NegocioException;
 import br.com.postech.pedidos.business.usecases.UseCase;
+import br.com.postech.pedidos.core.enums.StatusPagamento;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +21,7 @@ public class PagamentoRealizarUseCase implements UseCase<PagamentoRequestDTO, Pa
 
     @Override
     public PagamentoResponseDTO realizar(PagamentoRequestDTO pagamentoRequest) {
-        log.debug("Realizando pagamento para o cliente com cpf {}", pagamentoRequest.getPedido().getCliente().getCpf());
+        log.debug("Realizando pagamento para o cliente com id {}", pagamentoRequest.getPedido().getIdCliente());
         try {
             pagamentoGateway.pagar(pagamentoRequest);
             PagamentoResponseDTO pagamentoResponseDTO = new PagamentoResponseDTO();

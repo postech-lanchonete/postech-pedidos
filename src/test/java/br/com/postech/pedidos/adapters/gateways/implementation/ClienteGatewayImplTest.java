@@ -29,13 +29,13 @@ class ClienteGatewayImplTest {
     }
 
     @Test
-    void buscarPorCpf_DeveRetornarRespostaCorreta() {
-        String cpf = "123.321.123";
+    void buscarPorId_DeveRetornarRespostaCorreta() {
+        Long id = 123L;
         ClienteResponseDTO respostaSimulada = new ClienteResponseDTO();
-        when(restTemplate.getForObject("http://example.com/{cpf}", ClienteResponseDTO.class, cpf))
+        when(restTemplate.getForObject("http://example.com/{id}", ClienteResponseDTO.class, id))
                 .thenReturn(respostaSimulada);
 
-        ClienteResponseDTO resposta = gateway.buscarPorCpf(cpf);
+        ClienteResponseDTO resposta = gateway.buscarPorId(id);
 
         assertEquals(respostaSimulada, resposta);
     }

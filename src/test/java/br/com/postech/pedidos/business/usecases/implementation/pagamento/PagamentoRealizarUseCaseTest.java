@@ -2,12 +2,11 @@ package br.com.postech.pedidos.business.usecases.implementation.pagamento;
 
 import br.com.postech.pedidos.adapters.dto.request.PagamentoRequestDTO;
 import br.com.postech.pedidos.adapters.dto.request.PedidoRequestDTO;
-import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.PagamentoResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.ProdutoResponseDTO;
-import br.com.postech.pedidos.adapters.enums.StatusPagamento;
 import br.com.postech.pedidos.adapters.gateways.PagamentoGateway;
 import br.com.postech.pedidos.business.exceptions.NegocioException;
+import br.com.postech.pedidos.core.enums.StatusPagamento;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -51,9 +50,7 @@ class PagamentoRealizarUseCaseTest {
     private PagamentoRequestDTO criarPagamentoRequestDTO() {
         var dto = new PagamentoRequestDTO();
         var produtos = List.of(new ProdutoResponseDTO());
-        var cliente = new ClienteResponseDTO();
-        cliente.setCpf("123.321.123-00");
-        dto.setPedido(new PedidoRequestDTO(1L, StatusPagamento.PENDENTE, produtos, cliente));
+        dto.setPedido(new PedidoRequestDTO(1L, StatusPagamento.PENDENTE, produtos, 2L));
         return dto;
     }
 }

@@ -1,16 +1,13 @@
 package br.com.postech.pedidos.adapters.gateways;
 
-import br.com.postech.pedidos.adapters.dto.request.PedidoRequestDTO;
-import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
-import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
-import br.com.postech.pedidos.adapters.enums.StatusDoPedido;
+import br.com.postech.pedidos.core.entities.Pedido;
+
+import java.util.List;
 
 public interface PedidoGateway extends Gateway {
 
-    PedidoResponseDTO enviarParaProducao(PedidoRequestDTO pedido);
-    PedidoResponseDTO mudarStatus(PedidoResponseDTO pedido, StatusDoPedido novoStatus);
+    Pedido salvar(Pedido pedido);
+    Pedido buscarPorId(Long id);
+    List<Pedido> buscarTodos();
 
-    interface NotificacaoClienteGateway {
-        void notificaCliente(ClienteResponseDTO cliente, String mensagem);
-    }
 }

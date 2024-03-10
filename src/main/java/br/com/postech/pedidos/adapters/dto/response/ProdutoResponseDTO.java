@@ -1,6 +1,7 @@
 package br.com.postech.pedidos.adapters.dto.response;
 
 import br.com.postech.pedidos.adapters.enums.CategoriaProduto;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @SuppressWarnings("unused")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProdutoResponseDTO {
     @Schema(description = "ID do produto.")
     private Long id;

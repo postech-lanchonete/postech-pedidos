@@ -13,24 +13,24 @@ import static java.text.MessageFormat.format;
 
 @Slf4j
 @AllArgsConstructor
-@Component(value = "clienteBuscarPorCpfUseCase")
-public class ClienteBuscarPorCpfUseCase implements UseCase<String, ClienteResponseDTO> {
+@Component(value = "clienteBuscarPoIdUseCase")
+public class ClienteBuscarPoIdUseCase implements UseCase<Long, ClienteResponseDTO> {
 
     private final ClienteGateway clienteGateway;
 
     @Override
-    public ClienteResponseDTO realizar(String cpf) {
-        log.debug("Buscando cliente com cpf {}", cpf);
+    public ClienteResponseDTO realizar(Long id) {
+        log.debug("Buscando cliente com id {}", id);
         try {
-            var cliente = clienteGateway.buscarPorCpf(cpf);
+            var cliente = clienteGateway.buscarPorId(id);
             log.debug("Cliente encontrado com sucesso");
             return cliente;
         } catch (Exception exception) {
             if (exception instanceof ResourceAccessException) {
                 throw new InternalError("I/O exception");
             }
-            log.error("Cliente não encontrado com cpf {}", cpf);
-            throw new NotFoundException(format("Cliente não encontrado com cpf {0}", cpf));
+            log.error("Cliente não encontrado com id {}", id);
+            throw new NotFoundException(format("Cliente não encontrado com id {0}", id));
         }
     }
 

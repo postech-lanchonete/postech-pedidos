@@ -12,13 +12,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class PagamentoGatewayImpl implements PagamentoGateway {
 
-    private static final String TOPIC_PAGAMENTO = "pagamento-pedido-realizar-input";
-    private static final String TOPIC_ROLLBACK = "pagamento-pedido-realizar-rollback";
-
+    private static final String TOPIC_PAGAMENTO = "postech-pagamento-input";
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
-    public PagamentoGatewayImpl(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
+    public PagamentoGatewayImpl(KafkaTemplate<String, String> kafkaTemplate,
+                                ObjectMapper objectMapper) {
         this.kafkaTemplate = kafkaTemplate;
         this.objectMapper = objectMapper;
     }
@@ -34,20 +33,6 @@ public class PagamentoGatewayImpl implements PagamentoGateway {
         } catch (Exception e) {
             log.error("Erro ao enviar o pagamento para o Kafka", e);
             throw new RuntimeException("Erro ao enviar o pagamento ", e);
-        }
-    }
-
-    @Override
-    public void desfazerPagamento(PagamentoRequestDTO pagamento) {
-        try {
-            String jsonPagamento = objectMapper.writeValueAsString(pagamento);
-            kafkaTemplate.send(TOPIC_ROLLBACK, jsonPagamento);
-        } catch (JsonProcessingException e) {
-            log.error("Erro ao serializar o objeto PagamentoRequestDTO para JSON ao realizar o rollback", e);
-            throw new RuntimeException("Erro ao serializar o objeto PagamentoRequestDTO para JSON ao realizar o rollback", e);
-        } catch (Exception e) {
-            log.error("Erro ao enviar o pagamento para o Kafka ao realizar o rollback", e);
-            throw new RuntimeException("Erro ao enviar o pagamento ao realizar o rollback ", e);
         }
     }
 

@@ -1,47 +1,37 @@
 package br.com.postech.pedidos.drivers.external;
 
-import br.com.postech.pedidos.adapters.dto.request.PedidoRequestDTO;
-import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
-import br.com.postech.pedidos.adapters.enums.StatusDoPedido;
 import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import br.com.postech.pedidos.adapters.repositories.PedidoRepository;
+import br.com.postech.pedidos.business.exceptions.NotFoundException;
+import br.com.postech.pedidos.core.entities.Pedido;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Component
 public class PedidoGatewayImpl implements PedidoGateway {
 
-    private final RestTemplate restTemplate;
-    private final String microservicoUrl;
+    private final PedidoRepository pedidoRepository;
 
-    public PedidoGatewayImpl(RestTemplate restTemplate, @Value("${microservico.producao.url}") String microservicoUrl) {
-        this.restTemplate = restTemplate;
-        this.microservicoUrl = microservicoUrl;
+    public PedidoGatewayImpl(PedidoRepository pedidoRepository) {
+        this.pedidoRepository = pedidoRepository;
     }
 
     @Override
-    public PedidoResponseDTO enviarParaProducao(PedidoRequestDTO pedido) {
-        return restTemplate.postForObject(microservicoUrl, pedido, PedidoResponseDTO.class);
+    public List<Pedido> buscarTodos() {
+        return pedidoRepository.findAll();
     }
 
     @Override
-    public PedidoResponseDTO mudarStatus(PedidoResponseDTO pedido, StatusDoPedido novoStatus) {
-        String url = microservicoUrl + "/" + pedido.getId() + "/status";
+    public Pedido salvar(Pedido pedido) {
+        return pedidoRepository.save(pedido);
+    }
 
-        HttpHeaders headers = new HttpHeaders();
+    @Override
+    public Pedido buscarPorId(Long id) {
+        return pedidoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Pedido não encontrado com o id %d", id)));
+    }
 
-        HttpEntity<StatusDoPedido> requestEntity = new HttpEntity<>(novoStatus, headers);
 
-        ResponseEntity<PedidoResponseDTO> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.PUT,
-                requestEntity,
-                PedidoResponseDTO.class
-        );
-
-        return responseEntity.getBody();    }
 }

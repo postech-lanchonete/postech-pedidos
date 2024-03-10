@@ -1,16 +1,19 @@
 package br.com.postech.pedidos.business.usecases.implementation.pedido;
 
+import br.com.postech.pedidos.adapters.adapter.PedidoAdapter;
 import br.com.postech.pedidos.adapters.dto.CriacaoPedidoDTO;
 import br.com.postech.pedidos.adapters.dto.request.PagamentoRequestDTO;
-import br.com.postech.pedidos.adapters.dto.request.PedidoRequestDTO;
 import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.PagamentoResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.ProdutoResponseDTO;
-import br.com.postech.pedidos.adapters.enums.StatusPagamento;
+import br.com.postech.pedidos.adapters.gateways.NotificacaoClienteGateway;
 import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
 import br.com.postech.pedidos.business.exceptions.NegocioException;
 import br.com.postech.pedidos.business.usecases.UseCase;
+import br.com.postech.pedidos.core.entities.Pedido;
+import br.com.postech.pedidos.core.enums.StatusPagamento;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -20,49 +23,47 @@ import java.util.List;
 @Slf4j
 @Component("pedidoCriarUseCase")
 public class PedidoCriarUseCase implements UseCase<CriacaoPedidoDTO, PedidoResponseDTO> {
-    private final UseCase<String, ClienteResponseDTO> buscarClientePorCpfUseCase;
+    private final UseCase<Long, ClienteResponseDTO> clienteBuscarPoIdUseCase;
     private final UseCase<Long, ProdutoResponseDTO> buscarProdutoPorIdUseCase;
     private final UseCase<PagamentoRequestDTO, PagamentoResponseDTO> realizarPagamentoUseCase;
-    private final UseCase<PedidoResponseDTO, PedidoResponseDTO> pedidoDesfazerUseCase;
-    private final UseCase<PedidoRequestDTO, PedidoResponseDTO> pedidoEnviarParaProducaoUseCase;
 
-    private final PedidoGateway.NotificacaoClienteGateway notificacaoClienteGateway;
+    private final NotificacaoClienteGateway notificacaoClienteGateway;
+    private final PedidoAdapter pedidoAdapter;
+    private final PedidoGateway pedidoGateway;
 
-    public PedidoCriarUseCase(@Qualifier("clienteBuscarPorCpfUseCase") UseCase<String, ClienteResponseDTO> clienteBuscarPorCpfUseCase,
+    public PedidoCriarUseCase(@Qualifier("clienteBuscarPoIdUseCase") UseCase<Long, ClienteResponseDTO> clienteBuscarPorIdUseCase,
                               @Qualifier("realizarPagamentoUseCase") UseCase<PagamentoRequestDTO, PagamentoResponseDTO> realizarPagamentoUseCase,
-                              @Qualifier("pedidoDesfazerUseCase") UseCase<PedidoResponseDTO, PedidoResponseDTO> pedidoDesfazerUseCase,
-                              @Qualifier("pedidoEnviarParaProducaoUseCase") UseCase<PedidoRequestDTO, PedidoResponseDTO> pedidoEnviarParaProducaoUseCase,
-                              @Qualifier("produtoBuscarPorIdUseCase") UseCase<Long, ProdutoResponseDTO> buscarProdutoPorIdUseCase, PedidoGateway.NotificacaoClienteGateway notificacaoClienteGateway) {
-        this.buscarClientePorCpfUseCase = clienteBuscarPorCpfUseCase;
+                              @Qualifier("produtoBuscarPorIdUseCase") UseCase<Long, ProdutoResponseDTO> buscarProdutoPorIdUseCase,
+                              NotificacaoClienteGateway notificacaoClienteGateway, PedidoAdapter pedidoAdapter, PedidoGateway pedidoGateway) {
+        this.clienteBuscarPoIdUseCase = clienteBuscarPorIdUseCase;
         this.buscarProdutoPorIdUseCase = buscarProdutoPorIdUseCase;
         this.realizarPagamentoUseCase = realizarPagamentoUseCase;
-        this.pedidoDesfazerUseCase = pedidoDesfazerUseCase;
-        this.pedidoEnviarParaProducaoUseCase = pedidoEnviarParaProducaoUseCase;
         this.notificacaoClienteGateway = notificacaoClienteGateway;
+        this.pedidoAdapter = pedidoAdapter;
+        this.pedidoGateway = pedidoGateway;
     }
 
     @Override
+    @Transactional
     public PedidoResponseDTO realizar(CriacaoPedidoDTO pedidoCriacao) {
-        ClienteResponseDTO clienteResponseDTO = buscarClientePorCpfUseCase.realizar(pedidoCriacao.getCpfCliente());
-        log.info("Iniciando criacao de pedido para o cliente com cpf {}", pedidoCriacao.getCpfCliente());
+        ClienteResponseDTO clienteResponseDTO = clienteBuscarPoIdUseCase.realizar(pedidoCriacao.getIdCliente());
+        log.info("Iniciando criacao de pedido para o cliente com cpf {}", pedidoCriacao.getIdCliente());
 
         List<ProdutoResponseDTO> produtos = buscarProdutos(pedidoCriacao.getIdsProdutos());
+        Pedido pedido = pedidoAdapter.toEntity(clienteResponseDTO, produtos);
+        pedidoGateway.salvar(pedido);
 
-        PedidoRequestDTO pedidoRequestDTO = new PedidoRequestDTO(StatusPagamento.PENDENTE, produtos, clienteResponseDTO);
-        PagamentoRequestDTO pagamentoRequestDTO = new PagamentoRequestDTO(pedidoRequestDTO);
-        PedidoResponseDTO pedidoResponseDTO = pedidoEnviarParaProducaoUseCase.realizar(pedidoRequestDTO);
         try {
-            pagamentoRequestDTO.getPedido().setId(pedidoResponseDTO.getId());
-            PagamentoResponseDTO pagamento = realizarPagamentoUseCase.realizar(pagamentoRequestDTO);
-            pedidoResponseDTO.setPagamento(pagamento);
+            PagamentoRequestDTO pagamentoRequestDTO = pedidoAdapter.toPedidoRequestDTO(pedido);
+            realizarPagamentoUseCase.realizar(pagamentoRequestDTO);
+            notificacaoClienteGateway.notificaCliente(clienteResponseDTO, "Seu pagamento esta sendo processado.");
         } catch (Exception e) {
-            pedidoDesfazerUseCase.realizar(pedidoResponseDTO);
             throw new NegocioException("Pagamento não aprovado");
         }
 
-
-        notificacaoClienteGateway.notificaCliente(clienteResponseDTO, "Seu pedido foi aprovado e esta sendo produzido.");
-        return pedidoResponseDTO;
+        var result = pedidoAdapter.toDto(pedido, clienteResponseDTO);
+        result.setStatusPagamento(StatusPagamento.PENDENTE);
+        return result;
     }
 
     private List<ProdutoResponseDTO> buscarProdutos(List<Long> idProdutos) {

@@ -20,14 +20,16 @@ public class PedidoEnviarParaProducaoUseCase implements UseCase<PedidoRequestDTO
 
     @Override
     public PedidoResponseDTO realizar(PedidoRequestDTO pedidoRequestDTO) {
-        log.debug("Enviando pedido para produção");
-        try {
-            var pedido = pedidoGateway.enviarParaProducao(pedidoRequestDTO);
-            log.debug("Pedido enviado com sucesso");
-            return pedido;
-        } catch (Exception exception) {
-            log.error("Pedido não enviado para produção");
-            throw new NegocioException(exception.getMessage());
-        }
+        //TODO: remover este trecho de código
+//        log.debug("Enviando pedido para produção");
+//        try {
+//            var pedido = pedidoGateway.enviarParaProducao(pedidoRequestDTO);
+//            log.debug("Pedido enviado com sucesso");
+//            return pedido;
+//        } catch (Exception exception) {
+//            log.error("Pedido não enviado para produção");
+//            throw new NegocioException(exception.getMessage());
+//        }
+        return null;
     }
 }

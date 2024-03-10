@@ -18,7 +18,7 @@ public class ClienteGatewayImpl implements ClienteGateway {
     }
 
     @Override
-    public ClienteResponseDTO buscarPorCpf(String cpf) {
-        return restTemplate.getForObject(microservicoUrl + "{cpf}", ClienteResponseDTO.class, cpf);
+    public ClienteResponseDTO buscarPorId(Long id) {
+        return restTemplate.getForObject(microservicoUrl + "{id}", ClienteResponseDTO.class, id);
     }
 }
