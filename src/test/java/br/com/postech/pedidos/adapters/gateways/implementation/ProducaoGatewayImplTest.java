@@ -1,25 +1,16 @@
 package br.com.postech.pedidos.adapters.gateways.implementation;
 
-import br.com.postech.pedidos.adapters.dto.request.PagamentoRequestDTO;
-import br.com.postech.pedidos.adapters.dto.request.PedidoRequestDTO;
-import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
 import br.com.postech.pedidos.core.entities.Pedido;
-import br.com.postech.pedidos.drivers.external.PedidoGatewayImpl;
 import br.com.postech.pedidos.drivers.external.ProducaoGatewayImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.web.client.RestTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -37,7 +28,7 @@ class ProducaoGatewayImplTest {
 
     @InjectMocks
     private ProducaoGatewayImpl producaoGateway;
-    
+
     @Test
     void enviarParaProducao_DeveRetornarRespostaCorreta() throws JsonProcessingException {
         Pedido pedido = new Pedido();
