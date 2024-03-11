@@ -2,6 +2,7 @@ package br.com.postech.pedidos.adapters.input.subscribers;
 
 import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
 import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
+import br.com.postech.pedidos.business.exceptions.NegocioException;
 import br.com.postech.pedidos.core.entities.Pedido;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class ProducaoSubscriber {
             pedidoGateway.salvar(pedido);
         } catch (Exception e) {
             log.error("Erro ao processar a mensagem JSON: " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new NegocioException(e.getMessage());
         }
     }
 }

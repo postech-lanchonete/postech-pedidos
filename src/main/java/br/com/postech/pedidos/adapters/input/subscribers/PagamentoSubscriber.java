@@ -3,6 +3,7 @@ package br.com.postech.pedidos.adapters.input.subscribers;
 import br.com.postech.pedidos.adapters.dto.response.PagamentoResponseDTO;
 import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
 import br.com.postech.pedidos.adapters.gateways.ProducaoGateway;
+import br.com.postech.pedidos.business.exceptions.NegocioException;
 import br.com.postech.pedidos.core.entities.Pedido;
 import br.com.postech.pedidos.core.enums.StatusDoPedido;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +34,7 @@ public class PagamentoSubscriber {
             pedidoGateway.salvar(pedido);
         } catch (Exception e) {
             log.error("Erro ao processar a mensagem JSON: " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new NegocioException(e.getMessage());
         }
     }
 
@@ -47,7 +48,7 @@ public class PagamentoSubscriber {
             producaoGateway.enviarParaProducao(pedido);
         } catch (Exception e) {
             log.error("Erro ao processar a mensagem JSON: " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new NegocioException(e.getMessage());
         }
     }
 }
