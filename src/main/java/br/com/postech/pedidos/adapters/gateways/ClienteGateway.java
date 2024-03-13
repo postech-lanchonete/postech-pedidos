@@ -4,5 +4,5 @@ import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
 
 public interface ClienteGateway extends Gateway {
 
-    ClienteResponseDTO buscarPorCpf(String cpf);
+    ClienteResponseDTO buscarPorId(Long id);
 }

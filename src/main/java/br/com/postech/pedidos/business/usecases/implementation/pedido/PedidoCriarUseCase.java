@@ -1,15 +1,19 @@
 package br.com.postech.pedidos.business.usecases.implementation.pedido;
 
+import br.com.postech.pedidos.adapters.adapter.PedidoAdapter;
 import br.com.postech.pedidos.adapters.dto.CriacaoPedidoDTO;
 import br.com.postech.pedidos.adapters.dto.request.PagamentoRequestDTO;
-import br.com.postech.pedidos.adapters.dto.request.PedidoRequestDTO;
 import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.PagamentoResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.ProdutoResponseDTO;
+import br.com.postech.pedidos.adapters.gateways.NotificacaoClienteGateway;
+import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
 import br.com.postech.pedidos.business.exceptions.NegocioException;
 import br.com.postech.pedidos.business.usecases.UseCase;
-import br.com.postech.pedidos.drivers.external.notificacao.NotificacaoClientePort;
+import br.com.postech.pedidos.core.entities.Pedido;
+import br.com.postech.pedidos.core.enums.StatusPagamento;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -19,52 +23,47 @@ import java.util.List;
 @Slf4j
 @Component("pedidoCriarUseCase")
 public class PedidoCriarUseCase implements UseCase<CriacaoPedidoDTO, PedidoResponseDTO> {
-    private final UseCase<String, ClienteResponseDTO> buscarClientePorCpfUseCase;
+    private final UseCase<Long, ClienteResponseDTO> clienteBuscarPoIdUseCase;
     private final UseCase<Long, ProdutoResponseDTO> buscarProdutoPorIdUseCase;
     private final UseCase<PagamentoRequestDTO, PagamentoResponseDTO> realizarPagamentoUseCase;
-    private final UseCase<PagamentoRequestDTO, PagamentoResponseDTO> pagamentoDesfazerUseCase;
-    private final UseCase<PedidoRequestDTO, PedidoResponseDTO> pedidoEnviarParaProducaoUseCase;
 
-    private final NotificacaoClientePort notificacaoClientePort;
+    private final NotificacaoClienteGateway notificacaoClienteGateway;
+    private final PedidoAdapter pedidoAdapter;
+    private final PedidoGateway pedidoGateway;
 
-    public PedidoCriarUseCase(@Qualifier("clienteBuscarPorCpfUseCase") UseCase<String, ClienteResponseDTO> clienteBuscarPorCpfUseCase,
+    public PedidoCriarUseCase(@Qualifier("clienteBuscarPoIdUseCase") UseCase<Long, ClienteResponseDTO> clienteBuscarPorIdUseCase,
                               @Qualifier("realizarPagamentoUseCase") UseCase<PagamentoRequestDTO, PagamentoResponseDTO> realizarPagamentoUseCase,
-                              @Qualifier("pagamentoDesfazerUseCase") UseCase<PagamentoRequestDTO, PagamentoResponseDTO> pagamentoDesfazerUseCase,
-                              @Qualifier("pedidoEnviarParaProducaoUseCase") UseCase<PedidoRequestDTO, PedidoResponseDTO> pedidoEnviarParaProducaoUseCase,
-                              @Qualifier("produtoBuscarPorIdUseCase") UseCase<Long, ProdutoResponseDTO> buscarProdutoPorIdUseCase, NotificacaoClientePort notificacaoClientePort) {
-        this.buscarClientePorCpfUseCase = clienteBuscarPorCpfUseCase;
+                              @Qualifier("produtoBuscarPorIdUseCase") UseCase<Long, ProdutoResponseDTO> buscarProdutoPorIdUseCase,
+                              NotificacaoClienteGateway notificacaoClienteGateway, PedidoAdapter pedidoAdapter, PedidoGateway pedidoGateway) {
+        this.clienteBuscarPoIdUseCase = clienteBuscarPorIdUseCase;
         this.buscarProdutoPorIdUseCase = buscarProdutoPorIdUseCase;
         this.realizarPagamentoUseCase = realizarPagamentoUseCase;
-        this.pagamentoDesfazerUseCase = pagamentoDesfazerUseCase;
-        this.pedidoEnviarParaProducaoUseCase = pedidoEnviarParaProducaoUseCase;
-        this.notificacaoClientePort = notificacaoClientePort;
+        this.notificacaoClienteGateway = notificacaoClienteGateway;
+        this.pedidoAdapter = pedidoAdapter;
+        this.pedidoGateway = pedidoGateway;
     }
 
     @Override
+    @Transactional
     public PedidoResponseDTO realizar(CriacaoPedidoDTO pedidoCriacao) {
-        ClienteResponseDTO clienteResponseDTO = buscarClientePorCpfUseCase.realizar(pedidoCriacao.getCpfCliente());
-        log.info("Iniciando criacao de pedido para o cliente com cpf {}", pedidoCriacao.getCpfCliente());
+        ClienteResponseDTO clienteResponseDTO = clienteBuscarPoIdUseCase.realizar(pedidoCriacao.getIdCliente());
+        log.info("Iniciando criacao de pedido para o cliente com cpf {}", pedidoCriacao.getIdCliente());
 
         List<ProdutoResponseDTO> produtos = buscarProdutos(pedidoCriacao.getIdsProdutos());
+        Pedido pedido = pedidoAdapter.toEntity(clienteResponseDTO, produtos);
+        pedidoGateway.salvar(pedido);
 
-        PedidoRequestDTO pedidoRequestDTO = new PedidoRequestDTO(produtos, clienteResponseDTO);
-        PagamentoRequestDTO pagamentoRequestDTO = new PagamentoRequestDTO(pedidoRequestDTO);
-        PagamentoResponseDTO pagamento = realizarPagamentoUseCase.realizar(pagamentoRequestDTO);
-
-        PedidoResponseDTO pedidoResponseDTO = enviarParaProducao(pedidoRequestDTO, pagamentoRequestDTO);
-        pedidoResponseDTO.setPagamento(pagamento);
-
-        notificacaoClientePort.notificaCliente(clienteResponseDTO, "Seu pedido foi aprovado e esta sendo produzido.");
-        return pedidoResponseDTO;
-    }
-
-    private PedidoResponseDTO enviarParaProducao(PedidoRequestDTO pedidoRequestDTO, PagamentoRequestDTO pagamento) {
         try {
-            return pedidoEnviarParaProducaoUseCase.realizar(pedidoRequestDTO);
-        } catch (NegocioException negocioException) {
-            pagamentoDesfazerUseCase.realizar(pagamento);
-            throw negocioException;
+            PagamentoRequestDTO pagamentoRequestDTO = pedidoAdapter.toPedidoRequestDTO(pedido);
+            realizarPagamentoUseCase.realizar(pagamentoRequestDTO);
+            notificacaoClienteGateway.notificaCliente(clienteResponseDTO, "Seu pagamento esta sendo processado.");
+        } catch (Exception e) {
+            throw new NegocioException("Pagamento não aprovado");
         }
+
+        var result = pedidoAdapter.toDto(pedido, clienteResponseDTO);
+        result.setStatusPagamento(StatusPagamento.PENDENTE);
+        return result;
     }
 
     private List<ProdutoResponseDTO> buscarProdutos(List<Long> idProdutos) {

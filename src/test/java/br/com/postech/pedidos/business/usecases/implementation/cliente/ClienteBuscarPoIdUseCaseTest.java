@@ -15,42 +15,42 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ClienteBuscarPorCpfUseCaseTest {
-    private final String CPF = "12345678901";
+class ClienteBuscarPoIdUseCaseTest {
+    private final Long ID = 12345678901L;
 
     @Mock
     private ClienteGateway clienteGateway;
 
     @InjectMocks
-    private ClienteBuscarPorCpfUseCase clienteBuscarPorCpfUseCase;
+    private ClienteBuscarPoIdUseCase clienteBuscarPoIdUseCase;
 
     @Test
     void realizar_ClienteEncontrado_RetornaClienteResponseDTO() {
         ClienteResponseDTO clienteResponse = criarClienteResponseDTO();
 
-        when(clienteGateway.buscarPorCpf(CPF)).thenReturn(clienteResponse);
-        ClienteResponseDTO resultado = clienteBuscarPorCpfUseCase.realizar(CPF);
+        when(clienteGateway.buscarPorId(ID)).thenReturn(clienteResponse);
+        ClienteResponseDTO resultado = clienteBuscarPoIdUseCase.realizar(ID);
 
         assertEquals(clienteResponse, resultado);
     }
 
     @Test
     void realizar_ClienteNaoEncontrado_GeraNotFoundException() {
-        when(clienteGateway.buscarPorCpf(CPF)).thenThrow(new NotFoundException("Simulando exceção ao buscar cliente"));
+        when(clienteGateway.buscarPorId(ID)).thenThrow(new NotFoundException("Simulando exceção ao buscar cliente"));
 
-        assertThrows(NotFoundException.class, () -> clienteBuscarPorCpfUseCase.realizar(CPF));
+        assertThrows(NotFoundException.class, () -> clienteBuscarPoIdUseCase.realizar(ID));
     }
 
     @Test
     void realizar_ExcecaoAoBuscarCliente_GeraInternalError() {
-        when(clienteGateway.buscarPorCpf(CPF)).thenThrow(new ResourceAccessException("Simulando exceção ao buscar cliente"));
+        when(clienteGateway.buscarPorId(ID)).thenThrow(new ResourceAccessException("Simulando exceção ao buscar cliente"));
 
-        assertThrows(InternalError.class, () -> clienteBuscarPorCpfUseCase.realizar(CPF));
+        assertThrows(InternalError.class, () -> clienteBuscarPoIdUseCase.realizar(ID));
     }
 
     private ClienteResponseDTO criarClienteResponseDTO() {
         var dto = new ClienteResponseDTO();
-        dto.setCpf(CPF);
+        dto.setId(ID);
         dto.setNome("Nome");
         dto.setSobrenome("Sobrenome");
         return dto;

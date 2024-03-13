@@ -4,8 +4,8 @@ import br.com.postech.pedidos.adapters.dto.CriacaoPedidoDTO;
 import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.ProdutoResponseDTO;
-import br.com.postech.pedidos.adapters.enums.StatusDoPedido;
 import br.com.postech.pedidos.bdd.helper.RequestHelper;
+import br.com.postech.pedidos.core.enums.StatusDoPedido;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.E;
 import io.cucumber.java.pt.Entao;
@@ -15,6 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +24,16 @@ public class PedidoStepDefinition {
     private static final String PATCH = "/v1/pedidos";
 
     private RequestHelper<PedidoResponseDTO> requestSingleHelper;
+
+    private CriacaoPedidoDTO request;
+
+    @Dado("que eu queira enviar um pedido para producao")
+    public void queEuQueiraEnviarUmPedidoParaProducao() {
+        this.request = new CriacaoPedidoDTO();
+        this.request.setIdsProdutos(new ArrayList<>());
+    }
+
+
     private RequestHelper<ProdutoResponseDTO[]> requestListHelper;
     private ProdutoResponseDTO produtoEncontrado;
     private ClienteResponseDTO clienteEncontrado;
@@ -54,7 +65,7 @@ public class PedidoStepDefinition {
     @Quando("enviar uma requisição para criar um pedido para o cliente encontrado com o produto encontrado")
     public void enviarRequisicaoDeCriacao() {
         CriacaoPedidoDTO criacaoPedidoDTO = new CriacaoPedidoDTO();
-        criacaoPedidoDTO.setCpfCliente(clienteEncontrado.getCpf());
+        criacaoPedidoDTO.setIdCliente(clienteEncontrado.getId());
         criacaoPedidoDTO.setIdsProdutos(List.of(produtoEncontrado.getId()));
 
         this.requestSingleHelper = RequestHelper
@@ -76,20 +87,20 @@ public class PedidoStepDefinition {
         }
     }
 
-    @Quando("enviar uma requisição para criar um pedido para um cliente com o cpf {string} com o produto encontrado")
-    public void criarPedidoParaCpfInvalido(String cpf) {
+    @Quando("enviar uma requisição para criar um pedido para um cliente com o id {long} com o produto encontrado")
+    public void criarPedidoParaCpfInvalido(Long id) {
         CriacaoPedidoDTO criacaoPedidoDTO = new CriacaoPedidoDTO();
-        criacaoPedidoDTO.setCpfCliente(cpf);
+        criacaoPedidoDTO.setIdCliente(id);
         criacaoPedidoDTO.setIdsProdutos(List.of(produtoEncontrado.getId()));
 
         this.requestSingleHelper = RequestHelper
                 .realizar(PATCH, HttpMethod.POST, criacaoPedidoDTO, PedidoResponseDTO.class);
     }
 
-    @Quando("enviar uma requisição para criar um pedido para um cliente com o cpf {string} com o produto inexistente")
-    public void enviarUmaRequisicaoParaCriarUmPedidoParaUmClienteComOCpfComOProdutoInexistente(String cpf) {
+    @Quando("enviar uma requisição para criar um pedido para um cliente com o id {long} com o produto inexistente")
+    public void enviarUmaRequisicaoParaCriarUmPedidoParaUmClienteComOCpfComOProdutoInexistente(Long id) {
         CriacaoPedidoDTO criacaoPedidoDTO = new CriacaoPedidoDTO();
-        criacaoPedidoDTO.setCpfCliente(cpf);
+        criacaoPedidoDTO.setIdCliente(id);
         criacaoPedidoDTO.setIdsProdutos(List.of(999999999L));
 
         this.requestSingleHelper = RequestHelper
@@ -162,5 +173,11 @@ public class PedidoStepDefinition {
     @E("conter um erro da mensagem contendo {string}")
     public void conterUmErroDaMensagemContendo(String mensagemErro) {
         Assert.assertTrue("Mensagem de erro deve conter", Objects.requireNonNull(this.requestListHelper.getErrorResponse().getMessage()).contains(mensagemErro));
+    }
+
+
+    @E("tenha um produto com nome {string} com o preco de R$ {double}")
+    public void tenhaUmProdutoComNomeComOPrecoDeR$(String arg0, double valor) {
+        this.request.getIdsProdutos().add(1L);
     }
 }

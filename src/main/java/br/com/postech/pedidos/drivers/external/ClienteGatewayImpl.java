@@ -1,4 +1,4 @@
-package br.com.postech.pedidos.adapters.gateways.implementation;
+package br.com.postech.pedidos.drivers.external;
 
 import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
 import br.com.postech.pedidos.adapters.gateways.ClienteGateway;
@@ -18,7 +18,7 @@ public class ClienteGatewayImpl implements ClienteGateway {
     }
 
     @Override
-    public ClienteResponseDTO buscarPorCpf(String cpf) {
-        return restTemplate.getForObject(microservicoUrl + "{cpf}", ClienteResponseDTO.class, cpf);
+    public ClienteResponseDTO buscarPorId(Long id) {
+        return restTemplate.getForObject(microservicoUrl + "{id}", ClienteResponseDTO.class, id);
     }
 }

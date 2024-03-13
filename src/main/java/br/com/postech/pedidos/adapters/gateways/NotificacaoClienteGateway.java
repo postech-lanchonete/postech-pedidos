@@ -1,7 +1,8 @@
-package br.com.postech.pedidos.drivers.external.notificacao;
+package br.com.postech.pedidos.adapters.gateways;
 
 import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
 
-public interface NotificacaoClientePort {
+public interface NotificacaoClienteGateway {
     void notificaCliente(ClienteResponseDTO cliente, String mensagem);
+
 }
