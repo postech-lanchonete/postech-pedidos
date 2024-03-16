@@ -2,7 +2,6 @@ package br.com.postech.pedidos.adapters.gateways.implementation;
 
 import br.com.postech.pedidos.business.exceptions.BadRequestException;
 import br.com.postech.pedidos.core.entities.Pedido;
-import br.com.postech.pedidos.core.enums.StatusDoPedido;
 import br.com.postech.pedidos.drivers.external.ProducaoGatewayImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

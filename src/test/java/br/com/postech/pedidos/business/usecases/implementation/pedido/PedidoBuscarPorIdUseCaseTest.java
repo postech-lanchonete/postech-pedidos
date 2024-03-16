@@ -24,7 +24,7 @@ class PedidoBuscarPorIdUseCaseTest {
     private PedidoGateway pedidoGateway;
 
     @Spy
-    private PedidoAdapter pedidoAdapter = Mappers.getMapper(PedidoAdapter.class);;
+    private PedidoAdapter pedidoAdapter = Mappers.getMapper(PedidoAdapter.class);
 
     @Mock
     private ClienteBuscarPoIdUseCase clienteBuscarPoIdUseCase;

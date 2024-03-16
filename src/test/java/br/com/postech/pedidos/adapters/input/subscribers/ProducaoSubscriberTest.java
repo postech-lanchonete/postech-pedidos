@@ -1,5 +1,6 @@
 package br.com.postech.pedidos.adapters.input.subscribers;
 
+import br.com.postech.pedidos.adapters.gateways.DeadLetterQueueGateway;
 import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
 import br.com.postech.pedidos.business.exceptions.NegocioException;
 import br.com.postech.pedidos.core.entities.Pedido;
@@ -13,9 +14,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +30,9 @@ class ProducaoSubscriberTest {
 
     @Mock
     private PedidoGateway pedidoGateway;
+
+    @Mock
+    private DeadLetterQueueGateway deadLetterQueueGateway;
 
     @InjectMocks
     private ProducaoSubscriber producaoSubscriber;
@@ -44,14 +51,8 @@ class ProducaoSubscriberTest {
     @Test
     void consumeSuccess_Failure() {
         String value = "FALHA\"id\":123,\"status\":\"FINALIZADO\"}";
-
-        try {
-            producaoSubscriber.consumeSuccess(value);
-        } catch (NegocioException e) {
-            verify(pedidoGateway, never()).buscarPorId(anyLong());
-            verify(pedidoGateway, never()).salvar(any(Pedido.class));
-            return;
-        }
-        throw new AssertionError("Expected RuntimeException was not thrown");
+        producaoSubscriber.consumeSuccess(value);
+        verifyNoInteractions(pedidoGateway);
+        verify(deadLetterQueueGateway, times(1)).enviar(anyString(), eq(value));
     }
 }

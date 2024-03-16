@@ -1,6 +1,7 @@
 package br.com.postech.pedidos.adapters.input.subscribers;
 
 import br.com.postech.pedidos.adapters.dto.response.PagamentoResponseDTO;
+import br.com.postech.pedidos.adapters.gateways.DeadLetterQueueGateway;
 import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
 import br.com.postech.pedidos.adapters.gateways.ProducaoGateway;
 import br.com.postech.pedidos.business.exceptions.NegocioException;
@@ -17,9 +18,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PagamentoSubscriberTest {
@@ -30,6 +34,9 @@ class PagamentoSubscriberTest {
     @Mock
     private ProducaoGateway producaoGateway;
 
+    @Mock
+    private DeadLetterQueueGateway deadLetterQueueGateway;
+
     @Spy
     private ObjectMapper objectMapper;
 
@@ -38,20 +45,12 @@ class PagamentoSubscriberTest {
 
     @Test
     void consumeError_Success() {
-        String value = "{\"valor\":100.0,\"status\":\"APROVADO\",\"pedido\":{\"id\":123,\"statusPagamento\":\"PENDENTE\",\"produtos\":[{\"id\":1,\"nome\":\"Produto 1\",\"preco\":10.0}],\"idCliente\":456}}";
-        when(pedidoGateway.buscarPorId(anyLong())).thenReturn(new Pedido());
+        String value = "{{ERRO}}";
 
-        pagamentoSubscriber.consumeError(value);
+        pagamentoSubscriber.consumeSuccess(value);
 
-        verify(pedidoGateway, times(1)).buscarPorId(anyLong());
-        verify(pedidoGateway, times(1)).salvar(any(Pedido.class));
-    }
-
-    @Test
-    void consumeError_Failure() {
-        String value = "some_value";
-
-        assertThrows(NegocioException.class, () -> pagamentoSubscriber.consumeError(value));
+        verifyNoInteractions(pedidoGateway);
+        verify(deadLetterQueueGateway, times(1)).enviar(anyString(), eq(value));
     }
 
     @Test
@@ -68,10 +67,4 @@ class PagamentoSubscriberTest {
         verify(producaoGateway, times(1)).enviarParaProducao(any(Pedido.class));
     }
 
-    @Test
-    void consumeSuccess_Failure() {
-        String value = "some_value";
-
-        assertThrows(NegocioException.class, () -> pagamentoSubscriber.consumeSuccess(value));
-    }
 }
