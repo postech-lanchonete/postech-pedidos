@@ -1,7 +1,7 @@
-package br.com.postech.pedidos.drivers.external;
+package br.com.postech.pedidos.adapters.gateways;
 
 import br.com.postech.pedidos.adapters.dto.response.ProdutoResponseDTO;
-import br.com.postech.pedidos.adapters.gateways.ProdutoGateway;
+import br.com.postech.pedidos.drivers.external.ProdutoGateway;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;

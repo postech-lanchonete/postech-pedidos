@@ -1,8 +1,8 @@
 package br.com.postech.pedidos.adapters.input.subscribers;
 
 import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
-import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
-import br.com.postech.pedidos.business.exceptions.NegocioException;
+import br.com.postech.pedidos.drivers.external.DeadLetterQueueGateway;
+import br.com.postech.pedidos.drivers.external.PedidoGateway;
 import br.com.postech.pedidos.core.entities.Pedido;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -13,15 +13,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProducaoSubscriber {
 
+    public static final String TOPIC_PRODUCAO_OUTPUT = "postech-producao-output";
+    public static final String TOPIC_PRODUCAO_OUTPUT_DLQ = "postech-producao-output-dlq";
     private final ObjectMapper objectMapper;
     private final PedidoGateway pedidoGateway;
+    private final DeadLetterQueueGateway deadLetterQueueGateway;
 
-    public ProducaoSubscriber(ObjectMapper objectMapper, PedidoGateway pedidoGateway) {
+    public ProducaoSubscriber(ObjectMapper objectMapper, PedidoGateway pedidoGateway, DeadLetterQueueGateway deadLetterQueueGateway) {
         this.objectMapper = objectMapper;
         this.pedidoGateway = pedidoGateway;
+        this.deadLetterQueueGateway = deadLetterQueueGateway;
     }
 
-    @KafkaListener(topics = "postech-producao-output", groupId = "postech-group-pedido")
+    @KafkaListener(topics = TOPIC_PRODUCAO_OUTPUT, groupId = "postech-group-pedido")
     public void consumeSuccess(String value) {
         try {
             PedidoResponseDTO responseDTO = objectMapper.readValue(value, PedidoResponseDTO.class);
@@ -30,7 +34,7 @@ public class ProducaoSubscriber {
             pedidoGateway.salvar(pedido);
         } catch (Exception e) {
             log.error("Erro ao processar a mensagem JSON: " + e.getMessage());
-            throw new NegocioException(e.getMessage());
+            this.deadLetterQueueGateway.enviar(TOPIC_PRODUCAO_OUTPUT_DLQ, value);
         }
     }
 }

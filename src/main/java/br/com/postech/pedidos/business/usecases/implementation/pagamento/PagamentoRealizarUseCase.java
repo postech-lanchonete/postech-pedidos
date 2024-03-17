@@ -2,7 +2,7 @@ package br.com.postech.pedidos.business.usecases.implementation.pagamento;
 
 import br.com.postech.pedidos.adapters.dto.request.PagamentoRequestDTO;
 import br.com.postech.pedidos.adapters.dto.response.PagamentoResponseDTO;
-import br.com.postech.pedidos.adapters.gateways.PagamentoGateway;
+import br.com.postech.pedidos.drivers.external.PagamentoGateway;
 import br.com.postech.pedidos.business.exceptions.NegocioException;
 import br.com.postech.pedidos.business.usecases.UseCase;
 import br.com.postech.pedidos.core.enums.StatusPagamento;

@@ -1,4 +1,4 @@
-package br.com.postech.pedidos.adapters.gateways;
+package br.com.postech.pedidos.drivers.external;
 
 import br.com.postech.pedidos.adapters.dto.request.PagamentoRequestDTO;
 

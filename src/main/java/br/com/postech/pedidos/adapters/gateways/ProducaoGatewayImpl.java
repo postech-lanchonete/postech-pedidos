@@ -1,6 +1,6 @@
-package br.com.postech.pedidos.drivers.external;
+package br.com.postech.pedidos.adapters.gateways;
 
-import br.com.postech.pedidos.adapters.gateways.ProducaoGateway;
+import br.com.postech.pedidos.drivers.external.ProducaoGateway;
 import br.com.postech.pedidos.business.exceptions.BadRequestException;
 import br.com.postech.pedidos.core.entities.Pedido;
 import com.fasterxml.jackson.core.JsonProcessingException;

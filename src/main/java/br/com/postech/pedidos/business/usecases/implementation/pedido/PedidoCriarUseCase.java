@@ -1,14 +1,14 @@
 package br.com.postech.pedidos.business.usecases.implementation.pedido;
 
-import br.com.postech.pedidos.adapters.adapter.PedidoAdapter;
+import br.com.postech.pedidos.adapters.presenters.PedidoPresenter;
 import br.com.postech.pedidos.adapters.dto.CriacaoPedidoDTO;
 import br.com.postech.pedidos.adapters.dto.request.PagamentoRequestDTO;
 import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.PagamentoResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.ProdutoResponseDTO;
-import br.com.postech.pedidos.adapters.gateways.NotificacaoClienteGateway;
-import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
+import br.com.postech.pedidos.drivers.external.NotificacaoClienteGateway;
+import br.com.postech.pedidos.drivers.external.PedidoGateway;
 import br.com.postech.pedidos.business.exceptions.NegocioException;
 import br.com.postech.pedidos.business.usecases.UseCase;
 import br.com.postech.pedidos.core.entities.Pedido;
@@ -28,18 +28,18 @@ public class PedidoCriarUseCase implements UseCase<CriacaoPedidoDTO, PedidoRespo
     private final UseCase<PagamentoRequestDTO, PagamentoResponseDTO> realizarPagamentoUseCase;
 
     private final NotificacaoClienteGateway notificacaoClienteGateway;
-    private final PedidoAdapter pedidoAdapter;
+    private final PedidoPresenter pedidoPresenter;
     private final PedidoGateway pedidoGateway;
 
     public PedidoCriarUseCase(@Qualifier("clienteBuscarPoIdUseCase") UseCase<Long, ClienteResponseDTO> clienteBuscarPorIdUseCase,
                               @Qualifier("realizarPagamentoUseCase") UseCase<PagamentoRequestDTO, PagamentoResponseDTO> realizarPagamentoUseCase,
                               @Qualifier("produtoBuscarPorIdUseCase") UseCase<Long, ProdutoResponseDTO> buscarProdutoPorIdUseCase,
-                              NotificacaoClienteGateway notificacaoClienteGateway, PedidoAdapter pedidoAdapter, PedidoGateway pedidoGateway) {
+                              NotificacaoClienteGateway notificacaoClienteGateway, PedidoPresenter pedidoPresenter, PedidoGateway pedidoGateway) {
         this.clienteBuscarPoIdUseCase = clienteBuscarPorIdUseCase;
         this.buscarProdutoPorIdUseCase = buscarProdutoPorIdUseCase;
         this.realizarPagamentoUseCase = realizarPagamentoUseCase;
         this.notificacaoClienteGateway = notificacaoClienteGateway;
-        this.pedidoAdapter = pedidoAdapter;
+        this.pedidoPresenter = pedidoPresenter;
         this.pedidoGateway = pedidoGateway;
     }
 
@@ -50,18 +50,18 @@ public class PedidoCriarUseCase implements UseCase<CriacaoPedidoDTO, PedidoRespo
         log.info("Iniciando criacao de pedido para o cliente com cpf {}", pedidoCriacao.getIdCliente());
 
         List<ProdutoResponseDTO> produtos = buscarProdutos(pedidoCriacao.getIdsProdutos());
-        Pedido pedido = pedidoAdapter.toEntity(clienteResponseDTO, produtos);
+        Pedido pedido = pedidoPresenter.toEntity(clienteResponseDTO, produtos);
         pedidoGateway.salvar(pedido);
 
         try {
-            PagamentoRequestDTO pagamentoRequestDTO = pedidoAdapter.toPedidoRequestDTO(pedido);
+            PagamentoRequestDTO pagamentoRequestDTO = pedidoPresenter.toPedidoRequestDTO(pedido);
             realizarPagamentoUseCase.realizar(pagamentoRequestDTO);
             notificacaoClienteGateway.notificaCliente(clienteResponseDTO, "Seu pagamento esta sendo processado.");
         } catch (Exception e) {
             throw new NegocioException("Pagamento não aprovado");
         }
 
-        var result = pedidoAdapter.toDto(pedido, clienteResponseDTO);
+        var result = pedidoPresenter.toDto(pedido, clienteResponseDTO);
         result.setStatusPagamento(StatusPagamento.PENDENTE);
         return result;
     }

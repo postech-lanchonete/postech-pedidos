@@ -2,7 +2,7 @@ package br.com.postech.pedidos.adapters.gateways.implementation;
 
 import br.com.postech.pedidos.adapters.dto.request.PagamentoRequestDTO;
 import br.com.postech.pedidos.adapters.dto.request.PedidoRequestDTO;
-import br.com.postech.pedidos.drivers.external.PagamentoGatewayImpl;
+import br.com.postech.pedidos.adapters.gateways.PagamentoGatewayImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,7 @@
-package br.com.postech.pedidos.drivers.external;
+package br.com.postech.pedidos.adapters.gateways;
 
 import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
-import br.com.postech.pedidos.adapters.gateways.NotificacaoClienteGateway;
+import br.com.postech.pedidos.drivers.external.NotificacaoClienteGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
