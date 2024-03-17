@@ -1,9 +1,9 @@
 package br.com.postech.pedidos.business.usecases.implementation.pedido;
 
-import br.com.postech.pedidos.adapters.adapter.PedidoAdapter;
+import br.com.postech.pedidos.adapters.presenters.PedidoPresenter;
 import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
 import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
-import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
+import br.com.postech.pedidos.drivers.external.PedidoGateway;
 import br.com.postech.pedidos.business.exceptions.NotFoundException;
 import br.com.postech.pedidos.business.usecases.UseCase;
 import br.com.postech.pedidos.core.entities.Pedido;
@@ -14,14 +14,14 @@ import org.springframework.stereotype.Component;
 public class PedidoBuscarPorIdUseCase implements UseCase<Long, PedidoResponseDTO> {
 
     private final PedidoGateway pedidoGateway;
-    private final PedidoAdapter pedidoAdapter;
+    private final PedidoPresenter pedidoPresenter;
 
     private final UseCase<Long, ClienteResponseDTO> clienteBuscarPorIdUseCase;
 
     public PedidoBuscarPorIdUseCase(@Qualifier("clienteBuscarPoIdUseCase") UseCase<Long, ClienteResponseDTO> clienteBuscarPorIdUseCase,
-                                    PedidoGateway pedidoGateway, PedidoAdapter pedidoAdapter) {
+                                    PedidoGateway pedidoGateway, PedidoPresenter pedidoPresenter) {
         this.pedidoGateway = pedidoGateway;
-        this.pedidoAdapter = pedidoAdapter;
+        this.pedidoPresenter = pedidoPresenter;
         this.clienteBuscarPorIdUseCase = clienteBuscarPorIdUseCase;
     }
 
@@ -34,6 +34,6 @@ public class PedidoBuscarPorIdUseCase implements UseCase<Long, PedidoResponseDTO
         } catch (NotFoundException exception) {
             cliente = new ClienteResponseDTO();
         }
-        return pedidoAdapter.toDto(pedido, cliente);
+        return pedidoPresenter.toDto(pedido, cliente);
     }
 }

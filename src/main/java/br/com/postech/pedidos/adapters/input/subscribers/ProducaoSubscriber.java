@@ -1,8 +1,8 @@
 package br.com.postech.pedidos.adapters.input.subscribers;
 
 import br.com.postech.pedidos.adapters.dto.response.PedidoResponseDTO;
-import br.com.postech.pedidos.adapters.gateways.DeadLetterQueueGateway;
-import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
+import br.com.postech.pedidos.drivers.external.DeadLetterQueueGateway;
+import br.com.postech.pedidos.drivers.external.PedidoGateway;
 import br.com.postech.pedidos.core.entities.Pedido;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

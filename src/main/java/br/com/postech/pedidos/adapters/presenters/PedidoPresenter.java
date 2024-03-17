@@ -1,4 +1,4 @@
-package br.com.postech.pedidos.adapters.adapter;
+package br.com.postech.pedidos.adapters.presenters;
 
 import br.com.postech.pedidos.adapters.dto.request.PagamentoRequestDTO;
 import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface PedidoAdapter {
+public interface PedidoPresenter {
     @Mapping(target = "cliente.id", source = "idCliente")
     PedidoResponseDTO toDto(Pedido pedido);
 

@@ -1,7 +1,7 @@
 package br.com.postech.pedidos.business.usecases.implementation.cliente;
 
 import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
-import br.com.postech.pedidos.adapters.gateways.ClienteGateway;
+import br.com.postech.pedidos.drivers.external.ClienteGateway;
 import br.com.postech.pedidos.business.exceptions.NotFoundException;
 import br.com.postech.pedidos.business.usecases.UseCase;
 import lombok.AllArgsConstructor;

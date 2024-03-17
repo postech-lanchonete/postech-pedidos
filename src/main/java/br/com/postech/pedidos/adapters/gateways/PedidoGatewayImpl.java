@@ -1,6 +1,6 @@
-package br.com.postech.pedidos.drivers.external;
+package br.com.postech.pedidos.adapters.gateways;
 
-import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
+import br.com.postech.pedidos.drivers.external.PedidoGateway;
 import br.com.postech.pedidos.adapters.repositories.PedidoRepository;
 import br.com.postech.pedidos.business.exceptions.NotFoundException;
 import br.com.postech.pedidos.core.entities.Pedido;

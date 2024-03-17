@@ -1,8 +1,8 @@
 package br.com.postech.pedidos.business.usecases.implementation.pedido;
 
-import br.com.postech.pedidos.adapters.adapter.PedidoAdapter;
+import br.com.postech.pedidos.adapters.presenters.PedidoPresenter;
 import br.com.postech.pedidos.adapters.dto.response.ClienteResponseDTO;
-import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
+import br.com.postech.pedidos.drivers.external.PedidoGateway;
 import br.com.postech.pedidos.business.exceptions.NotFoundException;
 import br.com.postech.pedidos.business.usecases.implementation.cliente.ClienteBuscarPoIdUseCase;
 import br.com.postech.pedidos.core.entities.Pedido;
@@ -24,7 +24,7 @@ class PedidoBuscarPorIdUseCaseTest {
     private PedidoGateway pedidoGateway;
 
     @Spy
-    private PedidoAdapter pedidoAdapter = Mappers.getMapper(PedidoAdapter.class);
+    private PedidoPresenter pedidoPresenter = Mappers.getMapper(PedidoPresenter.class);
 
     @Mock
     private ClienteBuscarPoIdUseCase clienteBuscarPoIdUseCase;

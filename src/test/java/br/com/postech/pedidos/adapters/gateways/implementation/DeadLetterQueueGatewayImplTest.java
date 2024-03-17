@@ -1,6 +1,6 @@
 package br.com.postech.pedidos.adapters.gateways.implementation;
 
-import br.com.postech.pedidos.drivers.external.DeadLetterQueueGatewayImpl;
+import br.com.postech.pedidos.adapters.gateways.DeadLetterQueueGatewayImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.kafka.core.KafkaTemplate;

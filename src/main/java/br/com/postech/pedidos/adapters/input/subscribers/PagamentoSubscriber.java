@@ -1,10 +1,9 @@
 package br.com.postech.pedidos.adapters.input.subscribers;
 
 import br.com.postech.pedidos.adapters.dto.response.PagamentoResponseDTO;
-import br.com.postech.pedidos.adapters.gateways.DeadLetterQueueGateway;
-import br.com.postech.pedidos.adapters.gateways.PedidoGateway;
-import br.com.postech.pedidos.adapters.gateways.ProducaoGateway;
-import br.com.postech.pedidos.business.exceptions.NegocioException;
+import br.com.postech.pedidos.drivers.external.DeadLetterQueueGateway;
+import br.com.postech.pedidos.drivers.external.PedidoGateway;
+import br.com.postech.pedidos.drivers.external.ProducaoGateway;
 import br.com.postech.pedidos.core.entities.Pedido;
 import br.com.postech.pedidos.core.enums.StatusPagamento;
 import com.fasterxml.jackson.databind.ObjectMapper;

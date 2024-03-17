@@ -1,7 +1,7 @@
-package br.com.postech.pedidos.drivers.external;
+package br.com.postech.pedidos.adapters.gateways;
 
 import br.com.postech.pedidos.adapters.dto.request.PagamentoRequestDTO;
-import br.com.postech.pedidos.adapters.gateways.PagamentoGateway;
+import br.com.postech.pedidos.drivers.external.PagamentoGateway;
 import br.com.postech.pedidos.business.exceptions.NegocioException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

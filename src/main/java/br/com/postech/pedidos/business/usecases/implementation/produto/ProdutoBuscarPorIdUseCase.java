@@ -1,7 +1,7 @@
 package br.com.postech.pedidos.business.usecases.implementation.produto;
 
 import br.com.postech.pedidos.adapters.dto.response.ProdutoResponseDTO;
-import br.com.postech.pedidos.adapters.gateways.ProdutoGateway;
+import br.com.postech.pedidos.drivers.external.ProdutoGateway;
 import br.com.postech.pedidos.business.exceptions.NotFoundException;
 import br.com.postech.pedidos.business.usecases.UseCase;
 import lombok.extern.slf4j.Slf4j;
