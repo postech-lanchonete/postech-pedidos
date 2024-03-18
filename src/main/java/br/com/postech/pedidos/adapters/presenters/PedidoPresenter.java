@@ -27,6 +27,7 @@ public interface PedidoPresenter {
     @Mapping(target = "idCliente", source = "cliente.id")
     @Mapping(target = "produtos", expression = "java(mapProdutos(listaProdutos))")
     @Mapping(target = "status", constant = "PENDENTE")
+    @Mapping(target= "id", ignore = true)
     Pedido toEntity(ClienteResponseDTO cliente, List<ProdutoResponseDTO> listaProdutos);
 
     default List<Produto> mapProdutos(List<ProdutoResponseDTO> produtos) {

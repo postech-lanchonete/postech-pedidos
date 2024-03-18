@@ -46,10 +46,12 @@ public class PedidoCriarUseCase implements UseCase<CriacaoPedidoDTO, PedidoRespo
     @Override
     @Transactional
     public PedidoResponseDTO realizar(CriacaoPedidoDTO pedidoCriacao) {
+        log.info("Iniciando criacao de pedido para o cliente com cpf {}", pedidoCriacao.getIdCliente());
         ClienteResponseDTO clienteResponseDTO = clienteBuscarPoIdUseCase.realizar(pedidoCriacao.getIdCliente());
         log.info("Iniciando criacao de pedido para o cliente com cpf {}", pedidoCriacao.getIdCliente());
 
         List<ProdutoResponseDTO> produtos = buscarProdutos(pedidoCriacao.getIdsProdutos());
+        log.info("Produtos encontrados com sucesso");
         Pedido pedido = pedidoPresenter.toEntity(clienteResponseDTO, produtos);
         pedidoGateway.salvar(pedido);
 
@@ -58,7 +60,8 @@ public class PedidoCriarUseCase implements UseCase<CriacaoPedidoDTO, PedidoRespo
             realizarPagamentoUseCase.realizar(pagamentoRequestDTO);
             notificacaoClienteGateway.notificaCliente(clienteResponseDTO, "Seu pagamento esta sendo processado.");
         } catch (Exception e) {
-            throw new NegocioException("Pagamento não aprovado");
+            log.error("Comunicacao com o gateway de pagamento falhou", e);
+            throw new NegocioException("Comunicacao com o gateway de pagamento falhou. Tente novamente mais tarde.");
         }
 
         var result = pedidoPresenter.toDto(pedido, clienteResponseDTO);

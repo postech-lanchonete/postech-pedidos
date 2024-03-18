@@ -1,6 +1,7 @@
 package br.com.postech.pedidos.adapters.input.subscribers;
 
 import br.com.postech.pedidos.adapters.dto.response.PagamentoResponseDTO;
+import br.com.postech.pedidos.core.enums.StatusDoPedido;
 import br.com.postech.pedidos.drivers.external.DeadLetterQueueGateway;
 import br.com.postech.pedidos.drivers.external.PedidoGateway;
 import br.com.postech.pedidos.drivers.external.ProducaoGateway;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
@@ -30,16 +32,20 @@ public class PagamentoSubscriber {
         this.deadLetterQueueGateway = deadLetterQueueGateway;
     }
 
+    @Transactional
     @KafkaListener(topics = TOPIC_PAGAMENTO_OUTPUT, groupId = "postech-group-pedido")
     public void consumeSuccess(String value) {
         try {
             PagamentoResponseDTO responseDTO = objectMapper.readValue(value, PagamentoResponseDTO.class);
             Pedido pedido = pedidoGateway.buscarPorId(responseDTO.getPedido().getId());
             pedido.setStatusPagamento(responseDTO.getStatus());
-            pedidoGateway.salvar(pedido);
             if (pedido.getStatusPagamento() == StatusPagamento.APROVADO) {
                 producaoGateway.enviarParaProducao(pedido);
+            } else {
+                pedido.setStatus(StatusDoPedido.CANCELADO);
             }
+            pedidoGateway.salvar(pedido);
+
         } catch (Exception e) {
             log.error("Erro ao processar a mensagem JSON: " + e.getMessage());
             this.deadLetterQueueGateway.enviar(TOPIC_PAGAMENTO_OUTPUT_DLQ, value);
